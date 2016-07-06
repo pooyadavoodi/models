@@ -221,9 +221,9 @@ def train(dataset):
           num_preprocess_threads=num_preprocess_threads)
     else:
       print("fake_data is true\n")
-      images = tf.get_variable("images", [FLAGS.batch_size*FLAGS.num_gpus, 299, 299, 3], tf.float32, 
+      images = tf.get_variable("images", [FLAGS.batch_size, 299, 299, 3], tf.float32, 
                trainable=False)
-      labels = tf.get_variable("labels", [FLAGS.batch_size*FLAGS.num_gpus, ], tf.int32, 
+      labels = tf.get_variable("labels", [FLAGS.batch_size, ], tf.int32, 
                tf.constant_initializer(0), trainable=False)
 
     input_summaries = copy.copy(tf.get_collection(tf.GraphKeys.SUMMARIES))
