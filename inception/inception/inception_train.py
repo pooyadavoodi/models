@@ -31,6 +31,8 @@ from inception import image_processing
 from inception import inception_model as inception
 from inception.slim import slim
 
+import sys
+
 FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
@@ -211,9 +213,16 @@ def train(dataset):
     # Override the number of preprocessing threads to account for the increased
     # number of GPU towers.
     num_preprocess_threads = FLAGS.num_preprocess_threads * FLAGS.num_gpus
-    images, labels = image_processing.distorted_inputs(
-        dataset,
-        num_preprocess_threads=num_preprocess_threads)
+
+    if(FLAGS.fake_data == False):
+      print("fake_data is false\n")
+      images, labels = image_processing.distorted_inputs(
+          dataset,
+          num_preprocess_threads=num_preprocess_threads)
+    else:
+      print("fake_data is true\n")
+      images = tf.get_variable("images", [FLAGS.batch_size*FLAGS.num_gpus, 299, 299, 3], tf.float32, trainable=False)
+      labels = tf.get_variable("labels", [FLAGS.batch_size*FLAGS.num_gpus, ], tf.int32, tf.constant_initializer(0), trainable=False)
 
     input_summaries = copy.copy(tf.get_collection(tf.GraphKeys.SUMMARIES))
 
@@ -353,3 +362,5 @@ def train(dataset):
       if step % 5000 == 0 or (step + 1) == FLAGS.max_steps:
         checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')
         saver.save(sess, checkpoint_path, global_step=step)
+
+#      sys.stdout.flush()

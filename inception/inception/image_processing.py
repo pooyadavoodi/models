@@ -53,6 +53,8 @@ tf.app.flags.DEFINE_integer('num_preprocess_threads', 4,
                             """Please make this a multiple of 4.""")
 tf.app.flags.DEFINE_integer('num_readers', 4,
                             """Number of parallel readers during train.""")
+tf.app.flags.DEFINE_boolean('fake_data', False,
+                            """Work on fake_data.""")
 
 # Images are preprocessed asynchronously using multiple threads specified by
 # --num_preprocss_threads and the resulting processed images are stored in a
@@ -440,9 +442,9 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
     if num_preprocess_threads is None:
       num_preprocess_threads = FLAGS.num_preprocess_threads
 
-    if num_preprocess_threads % 4:
-      raise ValueError('Please make num_preprocess_threads a multiple '
-                       'of 4 (%d % 4 != 0).', num_preprocess_threads)
+#    if num_preprocess_threads % 4:
+#      raise ValueError('Please make num_preprocess_threads a multiple '
+#                       'of 4 (%d % 4 != 0).', num_preprocess_threads)
 
     if num_readers is None:
       num_readers = FLAGS.num_readers
