@@ -79,7 +79,17 @@ def _build_non_max_suppressor(nms_config):
     raise ValueError('max_detections_per_class should be no greater than '
                      'max_total_detections.')
 
-  non_max_suppressor_fn = functools.partial(
+  if(nms_config.combined_nms):
+    non_max_suppressor_fn = functools.partial(
+      post_processing.combined_non_max_suppression,
+      score_thresh=nms_config.score_threshold,
+      iou_thresh=nms_config.iou_threshold,
+      max_size_per_class=nms_config.max_detections_per_class,
+      max_total_size=nms_config.max_total_detections,
+      use_static_shapes=nms_config.use_static_shapes)
+
+  else:
+    non_max_suppressor_fn = functools.partial(
       post_processing.batch_multiclass_non_max_suppression,
       score_thresh=nms_config.score_threshold,
       iou_thresh=nms_config.iou_threshold,
